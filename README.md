@@ -126,3 +126,72 @@ Execute the following script to process sequences and compute the RMS ATE:
 ./tum_vi_eval_examples
 ```
 
+## **Problem and Solve**
+
+### P1: 在编译ubuntu16.04ros包的时候出现以下问题
+
+    
+    `/usr/bin/ld: CMakeFiles/RGBD.dir/src/ros_rgbd.cc.o: undefined reference to symbol ‘_ZN5boost6system15system_categoryEv’
+    /usr/lib/x86_64-linux-gnu/libboost_system.so: error adding symbols: DSO missing from command line
+    collect2: error: ld returned 1 exit status
+    CMakeFiles/RGBD.dir/build.make:218: recipe for target ‘../RGBD’ failed
+    make[2]: * [../RGBD] Error 1
+    CMakeFiles/Makefile2:67: recipe for target ‘CMakeFiles/RGBD.dir/all’ failed
+    make[1]: * [CMakeFiles/RGBD.dir/all] Error 2
+    make[1]: * 正在等待未完成的任务….
+    /usr/bin/ld: CMakeFiles/Stereo.dir/src/ros_stereo.cc.o: undefined reference to symbol ‘_ZN5boost6system15system_categoryEv’
+    /usr/lib/x86_64-linux-gnu/libboost_system.so: error adding symbols: DSO missing from command line
+    collect2: error: ld returned 1 exit status
+    CMakeFiles/Stereo.dir/build.make:218: recipe for target ‘../Stereo’ failed
+    make[2]: * [../Stereo] Error 1
+    CMakeFiles/Makefile2:104: recipe for target ‘CMakeFiles/Stereo.dir/all’ failed
+    make[1]: * [CMakeFiles/Stereo.dir/all] Error 2
+    Makefile:127: recipe for target ‘all’ failed
+    make: * [all] Error 2
+
+- 代码块高亮
+- 出错原因为：libboost_system.so 与libboost_filesystem.so找不到链接目录
+- 解决方案为
+
+```shell
+locate  boost_system
+```
+
+
+//查找到目录
+
+```shell
+/usr/lib/x86_64-linux-gnu/libboost_system.a
+/usr/lib/x86_64-linux-gnu/libboost_system.so
+/usr/lib/x86_64-linux-gnu/libboost_system.so.1.58.0
+/usr/local/MATLAB/R2017a/bin/glnxa64/libboost_system.so.1.56.0
+```
+
+```shell
+locate boost_filesystem
+```
+
+
+//查找到目录
+
+```shell
+/usr/lib/x86_64-linux-gnu/libboost_filesystem.a
+/usr/lib/x86_64-linux-gnu/libboost_filesystem.so
+/usr/lib/x86_64-linux-gnu/libboost_filesystem.so.1.58.0
+/usr/local/MATLAB/R2017a/bin/glnxa64/libboost_filesystem.so.1.56.0
+```
+
+将libboost_system.so与libboost_filesystem.so复制到ORB_SLAM2/lib下，并且将ORBSLAM2/Examples/ROS/ORBSLAM2下的Cmakelists.txt中加入库目录，具体为
+
+```shell
+set(LIBS
+${OpenCV_LIBS}
+${EIGEN3_LIBS}
+${Pangolin_LIBRARIES}
+${PROJECT_SOURCE_DIR}/../../../Thirdparty/DBoW2/lib/libDBoW2.so
+${PROJECT_SOURCE_DIR}/../../../Thirdparty/g2o/lib/libg2o.so
+${PROJECT_SOURCE_DIR}/../../../lib/libORB_SLAM2.so
+${PROJECT_SOURCE_DIR}/../../../lib/libboost_filesystem.so
+${PROJECT_SOURCE_DIR}/../../../lib/libboost_system.so
+}
+```
