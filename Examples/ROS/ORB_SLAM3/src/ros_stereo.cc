@@ -64,18 +64,17 @@ int main(int argc, char **argv)
     ImageGrabber igb(&SLAM);
 
     stringstream ss(argv[3]);
-	ss >> boolalpha >> igb.do_rectify;
+    ss >> igb.do_rectify;
 
+    cv::FileStorage fsSettings(argv[2], cv::FileStorage::READ);
+    if(!fsSettings.isOpened())
+    {
+        cerr << "ERROR: Wrong path to settings" << endl;
+        return -1;
+    }
     if(igb.do_rectify)
-    {      
+    {
         // Load settings related to stereo calibration
-        cv::FileStorage fsSettings(argv[2], cv::FileStorage::READ);
-        if(!fsSettings.isOpened())
-        {
-            cerr << "ERROR: Wrong path to settings" << endl;
-            return -1;
-        }
-
         cv::Mat K_l, K_r, P_l, P_r, R_l, R_r, D_l, D_r;
         fsSettings["LEFT.K"] >> K_l;
         fsSettings["RIGHT.K"] >> K_r;
@@ -94,6 +93,16 @@ int main(int argc, char **argv)
         int rows_r = fsSettings["RIGHT.height"];
         int cols_r = fsSettings["RIGHT.width"];
 
+        // 根据左右相机内参以及外参数求解stereoRectify(*)，得到配置文件需要的R_l,R_r,P_l,P_r.
+        // int flags = 0;
+        // flags |= cv::CALIB_ZERO_DISPARITY;
+        // cv::Mat R, t, Q;
+        // fsSettings["Rcam1_cam0"] >> R;
+        // fsSettings["tcam1_cam0"] >> t;
+        // cv::fisheye::stereoRectify(K_l, D_l, K_r, D_r, cv::Size(cols_l,rows_l),R, t, R_l, R_r, P_l, P_r, Q, flags);
+        // std::cout << "R_l = " << R_l << std::endl << "R_r = " << R_r << std::endl;
+        // std::cout << "P_l = " << P_l << std::endl << "P_r = " << P_r << std::endl;
+
         if(K_l.empty() || K_r.empty() || P_l.empty() || P_r.empty() || R_l.empty() || R_r.empty() || D_l.empty() || D_r.empty() ||
                 rows_l==0 || rows_r==0 || cols_l==0 || cols_r==0)
         {
@@ -106,9 +115,12 @@ int main(int argc, char **argv)
     }
 
     ros::NodeHandle nh;
+    std::string left_image_topic, right_image_topic;
+    fsSettings["Left_Image_Topic"] >> left_image_topic;
+    fsSettings["Right_Image_Topic"] >> right_image_topic;
 
-    message_filters::Subscriber<sensor_msgs::Image> left_sub(nh, "/camera/left/image_raw", 1);
-    message_filters::Subscriber<sensor_msgs::Image> right_sub(nh, "camera/right/image_raw", 1);
+    message_filters::Subscriber<sensor_msgs::Image> left_sub(nh, left_image_topic.c_str(), 1);
+    message_filters::Subscriber<sensor_msgs::Image> right_sub(nh, right_image_topic.c_str(), 1);
     typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Image, sensor_msgs::Image> sync_pol;
     message_filters::Synchronizer<sync_pol> sync(sync_pol(10), left_sub,right_sub);
     sync.registerCallback(boost::bind(&ImageGrabber::GrabStereo,&igb,_1,_2));

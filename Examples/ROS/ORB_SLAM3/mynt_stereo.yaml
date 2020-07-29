@@ -6,34 +6,35 @@
 Camera.type: "PinHole"
 
 # Camera calibration and distortion parameters (OpenCV) 
-Camera.fx: 435.2046959714599
-Camera.fy: 435.2046959714599
-Camera.cx: 367.4517211914062
-Camera.cy: 252.2008514404297
+Camera.fx: 309.7343004146454
+Camera.fy: 309.7343004146454
+Camera.cx: 369.1060924226316
+Camera.cy: 219.8836600090882
 
 Camera.k1: 0.0
 Camera.k2: 0.0
 Camera.p1: 0.0
 Camera.p2: 0.0
 
-Left_Image_Topic: /cam0/image_raw
-Right_Image_Topic: /cam1/image_raw
 Camera.bFishEye: 0
 
 Camera.width: 752
 Camera.height: 480
 
 # Camera frames per second 
-Camera.fps: 20.0
+Camera.fps: 25.0
 
 # stereo baseline times fx
-Camera.bf: 47.90639384423901
+Camera.bf: 37.16684731776955
 
 # Color order of the images (0: BGR, 1: RGB. It is ignored if images are grayscale)
 Camera.RGB: 1
 
 # Close/Far threshold. Baseline times.
 ThDepth: 35
+
+Left_Image_Topic: /mynteye/left/image_raw
+Right_Image_Topic: /mynteye/left/image_raw
 
 #--------------------------------------------------------------------------------------------
 # Stereo Rectification. Only if you need to pre-rectify the images.
@@ -43,47 +44,67 @@ LEFT.height: 480
 LEFT.width: 752
 LEFT.D: !!opencv-matrix
    rows: 1
-   cols: 5
+   cols: 4
    dt: d
-   data:[-0.28340811, 0.07395907, 0.00019359, 1.76187114e-05, 0.0]
+   data:[-0.018001393634436095, -0.0185758230958971, 0.025783362506661894, -0.015224696361623083]
 LEFT.K: !!opencv-matrix
    rows: 3
    cols: 3
    dt: d
-   data: [458.654, 0.0, 367.215, 0.0, 457.296, 248.375, 0.0, 0.0, 1.0]
+   data: [368.8510317868387, 0.0, 385.47141705647965, 0.0, 368.8553695836029, 225.73372958422058, 0.0, 0.0, 1.0]
 LEFT.R:  !!opencv-matrix
    rows: 3
    cols: 3
    dt: d
-   data: [0.999966347530033, -0.001422739138722922, 0.008079580483432283, 0.001365741834644127, 0.9999741760894847, 0.007055629199258132, -0.008089410156878961, -0.007044357138835809, 0.9999424675829176]
+   data: [0.9999819226867414, 0.004803423442241412, -0.003616824983675671,
+         -0.004811893981339418, 0.9999856921064569, -0.002336933606833844,
+          0.003605547952858809, 0.002354295139723479, 0.9999907286161981]
 LEFT.P:  !!opencv-matrix
    rows: 3
    cols: 4
    dt: d
-   data: [435.2046959714599, 0, 367.4517211914062, 0,  0, 435.2046959714599, 252.2008514404297, 0,  0, 0, 1, 0]
+   data: [309.7343004146454, 0, 369.1060924226316, 0,
+          0, 309.7343004146454, 219.8836600090882, 0, 
+         0, 0, 1, 0]
 
 RIGHT.height: 480
 RIGHT.width: 752
 RIGHT.D: !!opencv-matrix
    rows: 1
-   cols: 5
+   cols: 4
    dt: d
-   data:[-0.28368365, 0.07451284, -0.00010473, -3.555907e-05, 0.0]
+   data:[-0.019197615564818474, -0.009079217446442824, 0.0068648529789625224, -0.003660718263220941]
 RIGHT.K: !!opencv-matrix
    rows: 3
    cols: 3
    dt: d
-   data: [457.587, 0.0, 379.999, 0.0, 456.134, 255.238, 0.0, 0.0, 1]
+   data: [368.44352589477484, 0.0, 359.76345584885934, 0.0, 368.43377036298244, 226.01824377275628, 0.0, 0.0, 1]
 RIGHT.R:  !!opencv-matrix
    rows: 3
    cols: 3
    dt: d
-   data: [0.9999633526194376, -0.003625811871560086, 0.007755443660172947, 0.003680398547259526, 0.9999684752771629, -0.007035845251224894, -0.007729688520722713, 0.007064130529506649, 0.999945173484644]
+   data: [0.9999985815202218, 0.001282993123505809, 0.001091277320075906,
+          -0.001285549322255489, 0.9999964243399506, 0.002344924359864154,
+          -0.001088264896210346, -0.002346323924455581, 0.9999966552161847]
 RIGHT.P:  !!opencv-matrix
    rows: 3
    cols: 4
    dt: d
-   data: [435.2046959714599, 0, 367.4517211914062, -47.90639384423901, 0, 435.2046959714599, 252.2008514404297, 0, 0, 0, 1, 0]
+   data: [309.7343004146454, 0, 369.1060924226316, -37.16684731776955,
+          0, 309.7343004146454, 219.8836600090882, 0, 
+          0, 0, 1, 0]
+
+
+Rcam1_cam0: !!opencv-matrix
+    rows: 3
+    cols: 3
+    dt: d
+    data: [0.999982766368383, 0.003515323603174345, -0.004702070416357591, -0.0035373666286281752, 0.9999827553178016, -0.004687867783123271, 0.0046855099583810135, 0.004704419941113112, 0.999977956971776]
+tcam1_cam0: !!opencv-matrix
+    rows: 3
+    cols: 1
+    dt: d
+    data: [-0.11999573359357531, -0.00015395391942670775, -0.000130948808326588]
 
 #--------------------------------------------------------------------------------------------
 # ORB Parameters
@@ -96,7 +117,7 @@ ORBextractor.nFeatures: 1200
 ORBextractor.scaleFactor: 1.2
 
 # ORB Extractor: Number of levels in the scale pyramid	
-ORBextractor.nLevels: 8
+ORBextractor.nLevels: 5
 
 # ORB Extractor: Fast threshold
 # Image is divided in a grid. At each cell FAST are extracted imposing a minimum response.

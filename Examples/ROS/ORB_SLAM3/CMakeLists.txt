@@ -56,8 +56,8 @@ ${Pangolin_LIBRARIES}
 ${PROJECT_SOURCE_DIR}/../../../Thirdparty/DBoW2/lib/libDBoW2.so
 ${PROJECT_SOURCE_DIR}/../../../Thirdparty/g2o/lib/libg2o.so
 ${PROJECT_SOURCE_DIR}/../../../lib/libORB_SLAM3.so
-${PROJECT_SOURCE_DIR}/../../../lib/libboost_filesystem.so
-${PROJECT_SOURCE_DIR}/../../../lib/libboost_system.so
+/usr/lib/x86_64-linux-gnu/libboost_filesystem.so
+/usr/lib/x86_64-linux-gnu/libboost_system.so
 )
 
 # Node for monocular camera
@@ -80,6 +80,15 @@ target_link_libraries(MonoAR
 ${LIBS}
 )
 
+# Node for Mono camera
+rosbuild_add_executable(Mono
+src/ros_mono.cc
+)
+
+target_link_libraries(Mono
+${LIBS}
+)
+
 # Node for stereo camera
 rosbuild_add_executable(Stereo
 src/ros_stereo.cc
@@ -97,4 +106,3 @@ src/ros_rgbd.cc
 target_link_libraries(RGBD
 ${LIBS}
 )
-

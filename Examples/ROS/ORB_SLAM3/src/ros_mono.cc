@@ -51,7 +51,16 @@ int main(int argc, char **argv)
         cerr << endl << "Usage: rosrun ORB_SLAM3 Mono path_to_vocabulary path_to_settings" << endl;
         ros::shutdown();
         return 1;
-    }    
+    }
+
+    cv::FileStorage fsSettings(argv[2], cv::FileStorage::READ);
+    if(!fsSettings.isOpened())
+    {
+        cerr << "ERROR: Wrong path to settings" << endl;
+        return -1;
+    }
+    std::string image_topic;
+    fsSettings["Image_topic"] >> image_topic;
 
     // Create SLAM system. It initializes all system threads and gets ready to process frames.
     ORB_SLAM3::System SLAM(argv[1],argv[2],ORB_SLAM3::System::MONOCULAR,true);
@@ -59,7 +68,7 @@ int main(int argc, char **argv)
     ImageGrabber igb(&SLAM);
 
     ros::NodeHandle nodeHandler;
-    ros::Subscriber sub = nodeHandler.subscribe("/camera/image_raw", 1, &ImageGrabber::GrabImage,&igb);
+    ros::Subscriber sub = nodeHandler.subscribe(image_topic.c_str(), 1, &ImageGrabber::GrabImage,&igb);
 
     ros::spin();
 
